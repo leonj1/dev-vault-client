@@ -7,7 +7,7 @@ PUBLISH_DIR := publish
 
 # Build configuration
 CONFIGURATION := Release
-BINARY_NAME := CrossPlatformApp.CLI
+BINARY_NAME := devvault
 
 # Detect platform
 UNAME_S := $(shell uname -s)
