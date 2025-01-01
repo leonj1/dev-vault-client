@@ -35,11 +35,45 @@ A cross-platform console application built with .NET 8 that processes files cons
 
 ## Building the Project
 
+### Development Build
+
 Build the solution:
 ```bash
 cd src
 dotnet build
 ```
+
+### Static Binaries
+
+Build standalone static binaries for specific platforms:
+
+```bash
+# Build for Linux
+make publish-linux
+
+# Build for Windows
+make publish-windows
+
+# Build for macOS
+make publish-macos
+
+# Build for all platforms
+make publish-all
+
+# Clean published binaries
+make clean-publish
+```
+
+Published binaries will be available in the `publish` directory:
+- Linux: `publish/linux-x64/CrossPlatformApp`
+- Windows: `publish/win-x64/CrossPlatformApp.exe`
+- macOS: `publish/osx-x64/CrossPlatformApp`
+
+The binaries are:
+- Statically linked (no runtime dependencies)
+- Self-contained (no .NET runtime required)
+- Optimized for size and performance
+- Native AOT compiled
 
 ## Running the Application
 
@@ -103,3 +137,8 @@ The application is designed to work consistently across platforms:
 - `make clean-test` - Clean up test artifacts
 - `make install-hooks` - Install git hooks
 - `make uninstall-hooks` - Remove git hooks
+- `make publish-linux` - Build static binary for Linux
+- `make publish-windows` - Build static binary for Windows
+- `make publish-macos` - Build static binary for macOS
+- `make publish-all` - Build static binaries for all platforms
+- `make clean-publish` - Clean up published binaries
