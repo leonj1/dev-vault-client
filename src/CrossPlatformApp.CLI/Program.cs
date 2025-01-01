@@ -1,4 +1,5 @@
-﻿﻿﻿﻿﻿using System.CommandLine;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.CommandLine;
+using System.CommandLine.Parsing;
 using CrossPlatformApp.CLI.Commands;
 
 namespace CrossPlatformApp.CLI;
@@ -28,7 +29,34 @@ public class Program
         setupCommand.SetHandler(async () => await setupCommand.HandleCommand());
         rootCommand.AddCommand(setupCommand);
 
-        return await rootCommand.InvokeAsync(args);
+        // Add run command
+        var runCommand = new RunCommand();
+        runCommand.SetHandler(async (string[] command) => await runCommand.HandleCommand(command), runCommand.CommandArgument);
+        rootCommand.AddCommand(runCommand);
+
+        // Find the index of double dashes
+        var dashIndex = Array.IndexOf(args, "--");
+        var argsToUse = args;
+
+        if (dashIndex >= 0 && args[0] == "run")
+        {
+            // Remove the double dashes and pass everything after as command arguments
+            argsToUse = args.Take(dashIndex)
+                           .Concat(args.Skip(dashIndex + 1))
+                           .ToArray();
+        }
+
+        try
+        {
+            var exitCode = await rootCommand.InvokeAsync(argsToUse);
+            Environment.ExitCode = exitCode;
+            return exitCode;
+        }
+        catch (Exception)
+        {
+            Environment.ExitCode = 1;
+            return 1;
+        }
     }
 
     private static async Task<int> ProcessFileAsync(FileInfo? file)
