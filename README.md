@@ -43,37 +43,33 @@ cd src
 dotnet build
 ```
 
-### Static Binaries
+### Static Binary
 
-Build standalone static binaries for specific platforms:
+Build a standalone static binary for your current platform:
 
 ```bash
-# Build for Linux
-make publish-linux
+make publish
+```
 
-# Build for Windows
-make publish-windows
+The binary will be available in the `publish` directory as:
+- Linux: `publish/CrossPlatformApp`
+- Windows: `publish/CrossPlatformApp.exe`
+- macOS: `publish/CrossPlatformApp`
 
-# Build for macOS
-make publish-macos
+The generated binary is:
+- Fully statically linked (no external dependencies)
+- Native AOT compiled for maximum performance
+- Optimized for minimal size
+- Self-contained (no .NET runtime required)
+- Stripped of debug symbols
+- Platform-specific and optimized for the target OS
 
-# Build for all platforms
-make publish-all
-
-# Clean published binaries
+To clean up:
+```bash
 make clean-publish
 ```
 
-Published binaries will be available in the `publish` directory:
-- Linux: `publish/linux-x64/CrossPlatformApp`
-- Windows: `publish/win-x64/CrossPlatformApp.exe`
-- macOS: `publish/osx-x64/CrossPlatformApp`
-
-The binaries are:
-- Statically linked (no runtime dependencies)
-- Self-contained (no .NET runtime required)
-- Optimized for size and performance
-- Native AOT compiled
+Note: The binary must be built on the target platform (e.g., build on Linux for Linux, Windows for Windows, etc.).
 
 ## Running the Application
 
@@ -137,8 +133,5 @@ The application is designed to work consistently across platforms:
 - `make clean-test` - Clean up test artifacts
 - `make install-hooks` - Install git hooks
 - `make uninstall-hooks` - Remove git hooks
-- `make publish-linux` - Build static binary for Linux
-- `make publish-windows` - Build static binary for Windows
-- `make publish-macos` - Build static binary for macOS
-- `make publish-all` - Build static binaries for all platforms
+- `make publish` - Build static binary for current platform
 - `make clean-publish` - Clean up published binaries
