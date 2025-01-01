@@ -1,5 +1,5 @@
-# Use .NET 8 SDK as the base image
-FROM mcr.microsoft.com/dotnet/sdk:8.0
+# Use .NET 7 SDK as the base image
+FROM mcr.microsoft.com/dotnet/sdk:7.0
 
 # Set working directory
 WORKDIR /app
