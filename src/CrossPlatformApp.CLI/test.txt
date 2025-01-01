@@ -1,0 +1,6 @@
+This is a test file
+It contains multiple lines
+with different content
+to demonstrate our
+cross-platform console application
+working with files
