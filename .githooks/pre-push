@@ -4,7 +4,14 @@
 branch="$(git rev-parse --abbrev-ref HEAD)"
 echo "Running tests before pushing branch: $branch"
 
+# Get the root directory of the git repository
+root_dir="$(git rev-parse --show-toplevel)"
+
+# Change to the root directory
+cd "$root_dir" || exit 1
+
 # Run the tests using make
+echo "Running tests from directory: $(pwd)"
 make test
 
 # Capture the exit code
