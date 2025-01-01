@@ -27,23 +27,39 @@ public class SetupCommand : Command
                 return 0;
             }
 
-            var selection = AnsiConsole.Prompt(
-                new SelectionPrompt<Project>()
-                    .Title("Select a project")
-                    .PageSize(10)
-                    .UseConverter(p => p.Name)
-                    .AddChoices(projects)
-            );
+            // Display numbered list of projects
+            for (int i = 0; i < projects.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {projects[i].Name}");
+            }
+            Console.WriteLine("\nEnter project number or 'q' to quit:");
 
-            var selectedProject = selection;
+            while (true)
+            {
+                var input = Console.ReadLine()?.Trim().ToLower();
+                
+                if (input == "q")
+                {
+                    return 0;
+                }
 
-            await File.WriteAllTextAsync(
-                ConfigFile, 
-                $"PROJECT_ID={selectedProject.Id}\nPROJECT_NAME={selectedProject.Name}"
-            );
+                if (int.TryParse(input, out int selection) && 
+                    selection > 0 && 
+                    selection <= projects.Count)
+                {
+                    var selectedProject = projects[selection - 1];
+                    
+                    await File.WriteAllTextAsync(
+                        ConfigFile, 
+                        $"PROJECT_ID={selectedProject.Id}\nPROJECT_NAME={selectedProject.Name}"
+                    );
 
-            AnsiConsole.MarkupLine("[green]Configuration saved successfully![/]");
-            return 0;
+                    AnsiConsole.MarkupLine("[green]Configuration saved successfully![/]");
+                    return 0;
+                }
+
+                Console.WriteLine("Invalid selection. Please enter a valid number or 'q' to quit.");
+            }
         }
         catch (Exception ex)
         {
