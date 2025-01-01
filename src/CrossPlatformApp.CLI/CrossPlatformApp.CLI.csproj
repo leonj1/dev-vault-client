@@ -2,19 +2,36 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- AOT compilation -->
     <PublishAot>true</PublishAot>
-    <InvariantGlobalization>true</InvariantGlobalization>
-    <StripSymbols>true</StripSymbols>
+    <TrimMode>partial</TrimMode>
+    
+    <!-- Static linking -->
     <StaticallyLinked>true</StaticallyLinked>
-    <IlcDisableReflection>true</IlcDisableReflection>
-    <OptimizationPreference>Size</OptimizationPreference>
-    <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+    <IlcDisableReflection>false</IlcDisableReflection>
+    
+    <!-- Optimization -->
+    <IlcOptimizationPreference>Size</IlcOptimizationPreference>
     <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
-    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+    
+    <!-- Globalization -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
+    
+    <!-- Reflection and Assembly Loading -->
+    <RootAllApplicationAssemblies>true</RootAllApplicationAssemblies>
+    <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
+    <IlcGenerateMapFile>true</IlcGenerateMapFile>
+    
+    <!-- Debug/Trace -->
+    <StripSymbols>true</StripSymbols>
     <DebuggerSupport>false</DebuggerSupport>
+    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+    
+    <!-- Disable unnecessary features -->
     <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
     <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
     <EventSourceSupport>false</EventSourceSupport>
@@ -25,6 +42,10 @@
 
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="System.CommandLine" />
   </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@ PUBLISH_DIR := publish
 
 # Build configuration
 CONFIGURATION := Release
-BINARY_NAME := CrossPlatformApp
+BINARY_NAME := CrossPlatformApp.CLI
 
 # Detect platform
 UNAME_S := $(shell uname -s)
@@ -68,9 +68,13 @@ publish:
 	@cd src/CrossPlatformApp.CLI && \
 	dotnet publish -c $(CONFIGURATION) -r $(PLATFORM_RID) \
 		--self-contained true \
-		-p:PublishSingleFile=true \
 		-o ../../$(PUBLISH_DIR)
-	@echo "Binary built at $(PUBLISH_DIR)/$(BINARY_NAME)$(if $(findstring win,$(PLATFORM_RID)),.exe,)"
+	@echo "Cleaning up debug files..."
+	@rm -f $(PUBLISH_DIR)/*.dbg
+	@echo "Verifying binary..."
+	@ls -lh $(PUBLISH_DIR)/$(BINARY_NAME)$(if $(findstring win,$(PLATFORM_RID)),.exe,)
+	@echo "Testing binary..."
+	@$(PUBLISH_DIR)/$(BINARY_NAME)$(if $(findstring win,$(PLATFORM_RID)),.exe,) --help
 
 # Clean published binaries
 clean-publish:
