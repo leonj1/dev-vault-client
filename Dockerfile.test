@@ -4,21 +4,50 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0
 # Set working directory
 WORKDIR /app
 
+# Create non-root user
+RUN useradd -m dotnetuser && \
+    mkdir -p /home/dotnetuser/.dotnet && \
+    chown -R dotnetuser:dotnetuser /home/dotnetuser
+
+# Set environment variables for the non-root user
+ENV DOTNET_CLI_HOME=/home/dotnetuser
+ENV PATH="${PATH}:/home/dotnetuser/.dotnet/tools"
+
 # Copy solution and project files
 COPY src/*.sln ./src/
 COPY src/CrossPlatformApp.CLI/*.csproj ./src/CrossPlatformApp.CLI/
 COPY src/CrossPlatformApp.Tests/*.csproj ./src/CrossPlatformApp.Tests/
 
+# Set permissions for project directories
+RUN chown -R dotnetuser:dotnetuser /app
+
+# Switch to non-root user
+USER dotnetuser
+
 # Restore NuGet packages
 WORKDIR /app/src
 RUN dotnet restore
 
+# Install ReportGenerator tool
+RUN dotnet tool install -g dotnet-reportgenerator-globaltool
+
+# Switch back to root for copying files
+USER root
+
 # Copy the rest of the source code
 COPY src/CrossPlatformApp.CLI/. ./CrossPlatformApp.CLI/
 COPY src/CrossPlatformApp.Tests/. ./CrossPlatformApp.Tests/
+COPY src/coverage.runsettings ./coverage.runsettings
 
-# Create coverage directory
-RUN mkdir -p /app/testresults/coverage && chmod 777 /app/testresults/coverage
+# Set permissions again after copying files
+RUN chown -R dotnetuser:dotnetuser /app
 
-# Run tests with coverage
-CMD ["dotnet", "test", "--logger:trx", "--results-directory", "/app/testresults", "/p:CollectCoverage=true", "/p:CoverletOutput=/app/testresults/coverage/coverage.cobertura.xml", "/p:CoverletOutputFormat=cobertura"]
+# Switch back to non-root user for running tests
+USER dotnetuser
+
+# Run tests with coverage and generate report
+CMD dotnet test --settings coverage.runsettings --results-directory /app/testresults && \
+    reportgenerator \
+    -reports:/app/testresults/*/coverage.cobertura.xml \
+    -targetdir:/app/testresults/coverage/report \
+    -reporttypes:Html
