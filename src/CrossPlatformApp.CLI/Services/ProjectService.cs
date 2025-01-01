@@ -31,7 +31,6 @@ public class ProjectService
             // Fix malformed JSON by adding missing commas between properties
             content = content.Replace("\"\"", "\",\"");
             
-            Console.WriteLine($"Fixed response content: {content}"); // Debug log
             
             using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
             var projects = await JsonSerializer.DeserializeAsync(
@@ -41,7 +40,7 @@ public class ProjectService
             
             if (projects == null || !projects.Any())
             {
-                Console.Error.WriteLine("No projects found in the response");
+                Console.WriteLine("No projects available");
                 return new List<Project>();
             }
             

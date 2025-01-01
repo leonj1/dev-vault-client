@@ -23,8 +23,8 @@ public class SetupCommand : Command
             
             if (!projects.Any())
             {
-                AnsiConsole.MarkupLine("[red]No projects found[/]");
-                return 1;
+                AnsiConsole.MarkupLine("No projects");
+                return 0;
             }
 
             var selection = AnsiConsole.Prompt(
