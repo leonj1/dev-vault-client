@@ -1,5 +1,5 @@
-# Use .NET 8 SDK as the base image
-FROM mcr.microsoft.com/dotnet/sdk:8.0
+# Use .NET 7 SDK as the base image
+FROM mcr.microsoft.com/dotnet/sdk:7.0
 
 # Set working directory
 WORKDIR /app
@@ -42,7 +42,7 @@ WORKDIR /app/src
 RUN dotnet restore
 
 # Install ReportGenerator tool
-RUN dotnet tool install -g dotnet-reportgenerator-globaltool
+RUN dotnet tool install -g dotnet-reportgenerator-globaltool --version 5.1.26
 
 # Switch back to root for copying files
 USER root
