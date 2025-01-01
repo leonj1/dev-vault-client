@@ -1,0 +1,21 @@
+# Use .NET 8 SDK as the base image
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+# Set working directory
+WORKDIR /app
+
+# Copy solution and project files
+COPY src/*.sln ./src/
+COPY src/CrossPlatformApp.CLI/*.csproj ./src/CrossPlatformApp.CLI/
+COPY src/CrossPlatformApp.Tests/*.csproj ./src/CrossPlatformApp.Tests/
+
+# Restore NuGet packages
+WORKDIR /app/src
+RUN dotnet restore
+
+# Copy the rest of the source code
+COPY src/CrossPlatformApp.CLI/. ./CrossPlatformApp.CLI/
+COPY src/CrossPlatformApp.Tests/. ./CrossPlatformApp.Tests/
+
+# Run tests
+CMD ["dotnet", "test", "--logger:trx", "--results-directory", "/app/testresults"]
