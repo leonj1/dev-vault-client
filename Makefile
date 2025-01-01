@@ -35,6 +35,8 @@ uninstall-hooks:
 
 # Build test image and run tests
 test:
+	@echo "Creating test results directory..."
+	mkdir -p testresults/coverage
 	@echo "Cleaning up any existing test containers..."
 	docker rm $(TEST_CONTAINER_NAME) 2>/dev/null || true
 	@echo "Building test Docker image..."
@@ -42,7 +44,7 @@ test:
 	@echo "Running tests..."
 	docker run --name $(TEST_CONTAINER_NAME) $(DOCKER_TEST_IMAGE)
 	@echo "Copying test results..."
-	docker cp $(TEST_CONTAINER_NAME):/app/testresults ./testresults
+	docker cp $(TEST_CONTAINER_NAME):/app/testresults ./
 	@echo "Cleaning up..."
 	docker rm $(TEST_CONTAINER_NAME)
 	@echo "Test execution complete. Results available in ./testresults"

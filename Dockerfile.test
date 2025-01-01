@@ -1,5 +1,5 @@
-# Use .NET 7 SDK as the base image
-FROM mcr.microsoft.com/dotnet/sdk:7.0
+# Use .NET 8 SDK as the base image
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 
 # Set working directory
 WORKDIR /app
@@ -17,5 +17,8 @@ RUN dotnet restore
 COPY src/CrossPlatformApp.CLI/. ./CrossPlatformApp.CLI/
 COPY src/CrossPlatformApp.Tests/. ./CrossPlatformApp.Tests/
 
-# Run tests
-CMD ["dotnet", "test", "--logger:trx", "--results-directory", "/app/testresults"]
+# Create coverage directory
+RUN mkdir -p /app/testresults/coverage && chmod 777 /app/testresults/coverage
+
+# Run tests with coverage
+CMD ["dotnet", "test", "--logger:trx", "--results-directory", "/app/testresults", "/p:CollectCoverage=true", "/p:CoverletOutput=/app/testresults/coverage/coverage.cobertura.xml", "/p:CoverletOutputFormat=cobertura"]
