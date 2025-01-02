@@ -1,14 +1,19 @@
 using System.CommandLine;
 using System.Diagnostics;
+using CrossPlatformApp.CLI.Services;
 
 namespace CrossPlatformApp.CLI.Commands;
 
 public class RunCommand : Command
 {
     public readonly Argument<string[]> CommandArgument;
+    private readonly SecretsService _secretsService;
+    private readonly ProjectService _projectService;
 
     public RunCommand() : base(name: "run", description: "Run a command after double dashes (--)")
     {
+        _secretsService = new SecretsService();
+        _projectService = new ProjectService();
         CommandArgument = new Argument<string[]>(
             name: "command",
             description: "The command to run (specified after --)",
@@ -27,6 +32,17 @@ public class RunCommand : Command
             return 1;
         }
 
+        // Get current project ID
+        var projectId = await _projectService.GetCurrentProjectIdAsync(false);
+        if (string.IsNullOrEmpty(projectId))
+        {
+            Console.Error.WriteLine("No project configured. Run 'devvault setup' first.");
+            return 1;
+        }
+
+        // Fetch secrets for the project
+        var secrets = await _secretsService.GetSecretsAsync(projectId, false);
+
         var startInfo = new ProcessStartInfo
         {
             UseShellExecute = false,
@@ -35,6 +51,12 @@ public class RunCommand : Command
             RedirectStandardOutput = true,
             RedirectStandardError = true
         };
+
+        // Add secrets as environment variables
+        foreach (var secret in secrets)
+        {
+            startInfo.EnvironmentVariables[secret.Name] = secret.Value;
+        }
 
         // Execute the command directly
         startInfo.FileName = commandArgs[0];
