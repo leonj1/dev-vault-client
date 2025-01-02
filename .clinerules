@@ -30,3 +30,20 @@ devvault secrets
 </example>
 ```
 
+### run
+Support "run" argument to invoke the provided argument after double dashes.
+It should work like this: 
+```
+devvault run -- command-here
+```
+Where 'command-here' is what devvault should invoke.
+```
+<example> 
+devvault run -- ./demo.sh
+</example>
+
+<features>
+1. the stdout of the command should also be shown in the console.
+2. the exit code of the command should also be passed to the shell.
+</features>
+```
