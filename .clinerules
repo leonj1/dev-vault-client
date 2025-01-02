@@ -1,0 +1,15 @@
+# These are the expected features of this project, devvault.
+
+## command-line arguments
+
+### setup
+1. Fetches the list of projects from http://10.1.1.144:7601/projects
+2. The list of projects is displayed as a numbered list
+3. The user is prompted to select a project using the number from the list
+4. The selected project is saved to ~/.devvault/config.json
+
+### secrets
+1. Fetches the list of secrets for the selected project from http://10.1.1.144:7601/projects/{projectId}/secrets
+2. The list of secrets is displayed as a numbered list
+3. 'secrets' supports a --verbose flag to display http requests and detailed operation information
+
