@@ -13,3 +13,20 @@
 2. The list of secrets is displayed as a numbered list
 3. 'secrets' supports a --verbose flag to display http requests and detailed operation information
 
+4, When using argument 'secrets'.
+The program should display them in a table.
+
+```
+<example>
+devvault secrets
+┌─────────────────────┬──────────────┬──────┐
+│ NAME                │ VALUE        │ NOTE │
+├─────────────────────┼──────────────┼──────┤
+│ DOPPLER_CONFIG      │ dev_personal │      │
+│ DOPPLER_ENVIRONMENT │ dev          │      │
+│ DOPPLER_PROJECT     │ my-budget    │      │
+│ HELLO               │ WORLD        │      │
+└─────────────────────┴──────────────┴──────┘
+</example>
+```
+
