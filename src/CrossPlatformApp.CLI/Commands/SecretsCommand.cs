@@ -1,4 +1,5 @@
 using System.CommandLine;
+using CrossPlatformApp.CLI.Helpers;
 using CrossPlatformApp.CLI.Services;
 
 namespace CrossPlatformApp.CLI.Commands;
@@ -77,16 +78,13 @@ public class SecretsCommand : Command
             return 1;
         }
 
-        // Display secrets
-        foreach (var secret in secrets)
-        {
-            Console.WriteLine($"{secret.Name}={secret.Value}");
-            if (verbose)
-            {
-                Console.WriteLine($"  Source: {secret.Source}");
-                Console.WriteLine($"  ID: {secret.Identifier}");
-            }
-        }
+        // Display secrets in table format
+        var headers = new[] { "NAME", "VALUE", "NOTE" };
+        TableHelper.PrintTable(
+            secrets,
+            headers,
+            secret => new[] { secret.Name, secret.Value, verbose ? $"Source: {secret.Source}" : "" }
+        );
 
         return 0;
     }
