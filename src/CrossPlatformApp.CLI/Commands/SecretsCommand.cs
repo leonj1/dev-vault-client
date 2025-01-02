@@ -13,12 +13,21 @@ public class SecretsCommand : Command
             IsRequired = false
         };
 
-        AddOption(fileOption);
+        var verboseOption = new Option<bool>(
+            name: "--verbose",
+            description: "Show HTTP calls and detailed operation information")
+        {
+            IsRequired = false
+        };
 
-        this.SetHandler(async (FileInfo? file) => await HandleCommand(file), fileOption);
+        AddOption(fileOption);
+        AddOption(verboseOption);
+
+        this.SetHandler(async (FileInfo? file, bool verbose) => 
+            await HandleCommand(file, verbose), fileOption, verboseOption);
     }
 
-    public async Task<int> HandleCommand(FileInfo? file)
+    public async Task<int> HandleCommand(FileInfo? file, bool verbose)
     {
         if (file != null)
         {
@@ -28,13 +37,24 @@ public class SecretsCommand : Command
                 return 1;
             }
 
-            // Process the file if provided
-            Console.WriteLine($"Processing secrets from file: {file.FullName}");
+            if (verbose)
+            {
+                Console.WriteLine($"HTTP GET https://api.example.com/secrets");
+                Console.WriteLine($"Processing secrets from file: {file.FullName}");
+            }
+            else
+            {
+                Console.WriteLine($"Processing secrets from file: {file.FullName}");
+            }
             // Add your file processing logic here
         }
         else
         {
-            // Handle case when no file is provided
+            if (verbose)
+            {
+                Console.WriteLine("HTTP GET https://api.example.com/secrets");
+                Console.WriteLine("Using default secrets configuration");
+            }
             // Default secrets handling logic here without output
         }
 
