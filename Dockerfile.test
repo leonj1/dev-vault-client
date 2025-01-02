@@ -5,11 +5,11 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0
 WORKDIR /app
 
 # Create non-root user and set up directories
-ARG USER_ID=1000
-ARG GROUP_ID=1000
+ARG USER_ID=1001
+ARG GROUP_ID=1001
 
-RUN groupadd -g $GROUP_ID dotnetuser && \
-    useradd -u $USER_ID -g $GROUP_ID -m dotnetuser && \
+RUN if getent group $GROUP_ID; then groupmod -n dotnetuser $(getent group $GROUP_ID | cut -d: -f1); else groupadd -g $GROUP_ID dotnetuser; fi && \
+    if getent passwd $USER_ID; then usermod -l dotnetuser -d /home/dotnetuser -m $(getent passwd $USER_ID | cut -d: -f1); else useradd -u $USER_ID -g $GROUP_ID -m dotnetuser; fi && \
     mkdir -p /home/dotnetuser/.dotnet && \
     mkdir -p /home/dotnetuser/.nuget/NuGet && \
     chown -R dotnetuser:dotnetuser /home/dotnetuser && \

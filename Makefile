@@ -40,8 +40,7 @@ test:
 	@echo "Cleaning up any existing test containers..."
 	docker rm $(TEST_CONTAINER_NAME) 2>/dev/null || true
 	@echo "Building test Docker image..."
-	docker build -f $(DOCKER_BUILD_FILE) -t $(DOCKER_TEST_IMAGE) \
-	--build-arg USER_ID=$(shell id -u), --build-arg GROUP_ID=$(shell id -g) .
+	docker build -f $(DOCKER_BUILD_FILE) -t $(DOCKER_TEST_IMAGE) .
 	@echo "Running tests..."
 	docker run --name $(TEST_CONTAINER_NAME) \
 	-v $(shell pwd)/$(TEST_RESULTS_DIR):/app/$(TEST_RESULTS_DIR) $(DOCKER_TEST_IMAGE)

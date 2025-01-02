@@ -45,18 +45,29 @@ public class SecretsCommand : Command
 
         if (file != null)
         {
-            if (!file.Exists)
+            try
             {
-                Console.Error.WriteLine($"File not found: {file.FullName}");
+                if (!file.Exists)
+                {
+                    Console.Error.WriteLine($"File not found: {file.FullName}");
+                    return 1;
+                }
+
+                // TODO: Implement file processing logic
+                if (verbose)
+                {
+                    Console.WriteLine($"Processing secrets from file: {file.FullName}");
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                if (verbose)
+                {
+                    Console.Error.WriteLine($"Error processing file: {ex.Message}");
+                }
                 return 1;
             }
-
-            // TODO: Implement file processing logic
-            if (verbose)
-            {
-                Console.WriteLine($"Processing secrets from file: {file.FullName}");
-            }
-            return 0;
         }
 
         var secrets = await _secretsService.GetSecretsAsync(projectId, verbose);
