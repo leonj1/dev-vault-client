@@ -31,8 +31,8 @@ public class SecretsCommand : Command
         AddOption(fileOption);
         AddOption(verboseOption);
 
-        this.SetHandler(async (FileInfo? file, bool verbose) => 
-            await HandleCommand(file, verbose), fileOption, verboseOption);
+        this.SetHandler(async (bool verbose) => 
+            await HandleCommand(null, verbose), verboseOption);
     }
 
     public async Task<int> HandleCommand(FileInfo? file, bool verbose)

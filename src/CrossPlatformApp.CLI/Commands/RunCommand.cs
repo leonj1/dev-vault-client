@@ -7,11 +7,11 @@ public class RunCommand : Command
 {
     public readonly Argument<string[]> CommandArgument;
 
-    public RunCommand() : base(name: "run", description: "Run a command")
+    public RunCommand() : base(name: "run", description: "Run a command after double dashes (--)")
     {
         CommandArgument = new Argument<string[]>(
             name: "command",
-            description: "The command to run",
+            description: "The command to run (specified after --)",
             getDefaultValue: () => Array.Empty<string>())
         {
             Arity = ArgumentArity.OneOrMore
@@ -29,14 +29,21 @@ public class RunCommand : Command
 
         var startInfo = new ProcessStartInfo
         {
-            FileName = "bash",
-            Arguments = $"-e -c \"{string.Join(" ", commandArgs.Select(arg => $"\"{arg.Replace("\"", "\\\"")}\""))}\"",
+            UseShellExecute = false,
+            CreateNoWindow = true,
             WorkingDirectory = Directory.GetCurrentDirectory(),
             RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
+            RedirectStandardError = true
         };
+
+        // Execute the command directly
+        startInfo.FileName = commandArgs[0];
+        
+        // Add remaining arguments directly to ArgumentList
+        foreach (var arg in commandArgs.Skip(1))
+        {
+            startInfo.ArgumentList.Add(arg);
+        }
 
         using var process = new Process { StartInfo = startInfo };
 
@@ -63,9 +70,13 @@ public class RunCommand : Command
             process.BeginErrorReadLine();
             await process.WaitForExitAsync();
             
-            // Ensure all output is flushed
+            // Ensure all output is flushed and get the exit code
             process.WaitForExit();
-            return process.ExitCode;
+            var exitCode = process.ExitCode;
+
+            // Set the environment exit code to match
+            Environment.ExitCode = exitCode;
+            return exitCode;
         }
         catch (Exception ex)
         {

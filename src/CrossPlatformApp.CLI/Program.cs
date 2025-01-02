@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.CommandLine;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.CommandLine;
 using System.CommandLine.Parsing;
 using CrossPlatformApp.CLI.Commands;
 
@@ -36,16 +36,8 @@ public class Program
                            .ToArray();
         }
 
-        try
-        {
-            var exitCode = await rootCommand.InvokeAsync(argsToUse);
-            Environment.ExitCode = exitCode;
-            return exitCode;
-        }
-        catch (Exception)
-        {
-            Environment.ExitCode = 1;
-            return 1;
-        }
+        var exitCode = await rootCommand.InvokeAsync(argsToUse);
+        Environment.Exit(exitCode);
+        return exitCode;
     }
 }
