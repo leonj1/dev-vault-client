@@ -1,11 +1,18 @@
 using System.CommandLine;
+using CrossPlatformApp.CLI.Services;
 
 namespace CrossPlatformApp.CLI.Commands;
 
 public class SecretsCommand : Command
 {
+    private readonly ProjectService _projectService;
+    private readonly SecretsService _secretsService;
+
     public SecretsCommand() : base("secrets", "Manage secrets for the application")
     {
+        _projectService = new ProjectService();
+        _secretsService = new SecretsService();
+
         var fileOption = new Option<FileInfo?>(
             name: "--file",
             description: "Optional file containing secrets")
@@ -29,6 +36,13 @@ public class SecretsCommand : Command
 
     public async Task<int> HandleCommand(FileInfo? file, bool verbose)
     {
+        var projectId = await _projectService.GetCurrentProjectIdAsync(verbose);
+        if (string.IsNullOrEmpty(projectId))
+        {
+            Console.Error.WriteLine("No project configured. Run 'devvault setup' first.");
+            return 1;
+        }
+
         if (file != null)
         {
             if (!file.Exists)
@@ -37,25 +51,30 @@ public class SecretsCommand : Command
                 return 1;
             }
 
+            // TODO: Implement file processing logic
             if (verbose)
             {
-                Console.WriteLine($"HTTP GET https://api.example.com/secrets");
                 Console.WriteLine($"Processing secrets from file: {file.FullName}");
             }
-            else
-            {
-                Console.WriteLine($"Processing secrets from file: {file.FullName}");
-            }
-            // Add your file processing logic here
+            return 0;
         }
-        else
+
+        var secrets = await _secretsService.GetSecretsAsync(projectId, verbose);
+        if (!secrets.Any())
         {
+            Console.Error.WriteLine("No secrets found for the current project.");
+            return 1;
+        }
+
+        // Display secrets
+        foreach (var secret in secrets)
+        {
+            Console.WriteLine($"{secret.Name}={secret.Value}");
             if (verbose)
             {
-                Console.WriteLine("HTTP GET https://api.example.com/secrets");
-                Console.WriteLine("Using default secrets configuration");
+                Console.WriteLine($"  Source: {secret.Source}");
+                Console.WriteLine($"  ID: {secret.Identifier}");
             }
-            // Default secrets handling logic here without output
         }
 
         return 0;
