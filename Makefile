@@ -35,24 +35,24 @@ uninstall-hooks:
 
 # Build test image and run tests
 test:
-	@echo "Creating test results directory..."
-	mkdir -p $(COVERAGE_DIR) && chmod -R 777 $(TEST_RESULTS_DIR)
+	#@echo "Creating test results directory..."
+	#mkdir -p $(COVERAGE_DIR) && chmod -R 777 $(TEST_RESULTS_DIR)
 	@echo "Cleaning up any existing test containers..."
-	docker rm $(TEST_CONTAINER_NAME) 2>/dev/null || true
+	docker rm -f $(TEST_CONTAINER_NAME)  || true
 	@echo "Building test Docker image..."
 	docker build -f $(DOCKER_BUILD_FILE) -t $(DOCKER_TEST_IMAGE) .
 	@echo "Running tests..."
 	docker run --name $(TEST_CONTAINER_NAME) \
 	-v $(shell pwd)/$(TEST_RESULTS_DIR):/app/$(TEST_RESULTS_DIR) $(DOCKER_TEST_IMAGE)
 	@echo "Cleaning up..."
-	docker rm $(TEST_CONTAINER_NAME)
+	docker rm -f $(TEST_CONTAINER_NAME) || true
 	@echo "Test execution complete. Results available in ./$(TEST_RESULTS_DIR)"
 
 # Clean up test artifacts
 clean-test:
 	@echo "Cleaning up test artifacts..."
 	docker rmi $(DOCKER_TEST_IMAGE) 2>/dev/null || true
-	docker rm $(TEST_CONTAINER_NAME) 2>/dev/null || true
+	docker rm -f $(TEST_CONTAINER_NAME) || true
 	rm -rf ./$(TEST_RESULTS_DIR)
 	@echo "Clean up complete"
 
